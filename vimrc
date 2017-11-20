@@ -16,6 +16,7 @@ Plugin 'vim-airline/vim-airline' " Nice status bar
 Plugin 'vim-airline/vim-airline-themes' " Theming for the status bar
 Plugin 'mattn/emmet-vim' " Emmet functionality
 Plugin 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
+Plugin 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
 Plugin 'tpope/vim-commentary' " Commenting
 
 call vundle#end()

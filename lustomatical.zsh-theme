@@ -4,7 +4,6 @@ ZSH_THEME_GIT_PROMPT_PREFIX="%{$reset_color%}  "
 ZSH_THEME_GIT_PROMPT_SUFFIX=""
 ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%} ✗%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
-emo=$emoji[extraterrestrial_alien]
 
 # Customized git status
 git_custom_status() {
@@ -15,5 +14,5 @@ git_custom_status() {
 }
 
 # Relies on patched powerline font and emoji plugin
-PROMPT='%{$FG[013]%}$(virtualenv_prompt_info)%{$FG[033]%}[%2~]$(git_custom_status)%(?.%{$fg[green]%}.%{$fg[red]%}) $emo  %B$%b '
+PROMPT='%{$FG[013]%}$(virtualenv_prompt_info)%{$FG[033]%}[%2~]$(git_custom_status)%(?.%{$fg[green]%}.%{$fg[red]%}) %B$%b '
 
