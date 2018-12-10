@@ -61,12 +61,6 @@ set updatetime=250
 let g:gitgutter_override_sign_column_highlight=0
 
 " fzf
-" search all files
-nnoremap <leader>f :Files<cr>
-" search git files
-nnoremap <leader>g :GFiles<cr>
-" search buffers
-nnoremap <leader>b :Buffers<cr>
 " where to open fzf list
 let g:fzf_layout = { 'window': ':below 10split enew' }
 
@@ -104,6 +98,10 @@ nnoremap <leader>w :w!<cr>
 
 " Force Signify to refresh git gutter info
 nnoremap <silent> <leader>R :SignifyRefresh<cr>
+
+" search files with fzf
+nnoremap <C-p> :Files<cr>
+nnoremap <leader>b :Buffers<cr>
 
 " Always show the current position
 set ruler
