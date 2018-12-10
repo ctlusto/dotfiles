@@ -62,7 +62,7 @@ let g:gitgutter_override_sign_column_highlight=0
 
 " fzf
 " where to open fzf list
-let g:fzf_layout = { 'window': ':below 10split enew' }
+let g:fzf_layout = { 'down': '~20%' }
 
 """"""""""""""""""
 " End plugin stuff
