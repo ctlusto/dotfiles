@@ -101,7 +101,7 @@ nnoremap <silent> <leader>R :SignifyRefresh<cr>
 
 " search files with fzf
 nnoremap <C-p> :Files<cr>
-nnoremap <leader>b :Buffers<cr>
+nnoremap ; :Buffers<cr>
 
 " Always show the current position
 set ruler
