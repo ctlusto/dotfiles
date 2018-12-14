@@ -165,6 +165,10 @@ augroup filetypedetect
 augroup END
 
 " Color scheme
+augroup dracula_customization
+  au!
+  autocmd ColorScheme * highlight LineNr guifg=#949494
+augroup END
 color dracula
 
 " Line numbers
