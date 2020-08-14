@@ -1,3 +1,6 @@
+" Needs to come before ALE is loaded
+let g:ale_completion_enabled = 1
+
 " Plugin setup
 call plug#begin('~/.local/share/nvim/plugged')
 set nocompatible
@@ -6,11 +9,10 @@ set t_Co=256
 
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' } " Async support
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' } " Autocompletion 
 Plug 'Raimondi/delimitMate' " Better matching for delimiters
 Plug '/usr/local/opt/fzf' " Better file finding with fzf
 Plug 'junegunn/fzf.vim' " Better file finding with fzf
-Plug 'airblade/vim-gitgutter' " Git change information in the gutter
+Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive' " Git wrapper 
 Plug 'tpope/vim-unimpaired' " Pairs of useful mappings
 Plug 'sheerun/vim-polyglot' " Support for a bunch of languages
@@ -20,10 +22,12 @@ Plug 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
 Plug 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
 Plug 'tpope/vim-commentary' " Commenting
 Plug 'wizicer/vim-jison' " jison syntax highlighting
+Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 
 " Typescript
-Plug 'Quramy/tsuquyomi' " Make nvim into a sort-of IDE for TS 
+Plug 'dense-analysis/ale'
 Plug 'leafgarland/typescript-vim' " TS syntax highlighting
+Plug 'peitalin/vim-jsx-typescript' " TSX
 Plug 'Quramy/vim-js-pretty-template' " Syntax highlighting for template strings
 Plug 'jason0x43/vim-js-indent' " Indentation for JS/TS
 
@@ -34,15 +38,23 @@ call plug#end()
 """"""""""""""""""""""
 
 " Autocompletion
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_camel_case = 1
-let g:deoplete#omni#input_patterns = {}
+" let g:deoplete#enable_at_startup = 1
+" let g:deoplete#enable_smart_case = 1
+" let g:deoplete#enable_camel_case = 1
+" let g:deoplete#omni#input_patterns = {}
 let g:nvim_typescript#signature_complete = 1
 autocmd CompleteDone * pclose!
+" Disable for text files, because it's annoying in prose
+autocmd FileType text  let b:deoplete_disable_auto_complete = 1
 
-" Typescript
-let g:tsuquyomi_definition_split = 1 " Open definition files in split
+" ALE
+let g:ale_set_loclist=0
+let g:ale_set_quickfix=1
+let g:ale_open_list=1
+let g:ale_set_signs=1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave=0
+let g:ale_lint_on_enter=0
 
 " Tab to complete
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
@@ -54,11 +66,11 @@ let g:delimitMate_expand_cr=1
 let g:airline_theme='dracula'
 let g:airline#extension#tabline#enabled=1
 let g:airline_powerline_fonts=1
+let g:airline#extensions#ale#enabled=1
 set laststatus=2
 
 " Gutter info behavior/styling
 set updatetime=250
-let g:gitgutter_override_sign_column_highlight=0
 
 " fzf
 " where to open fzf list
@@ -95,9 +107,6 @@ inoremap jk <esc>
 
 " Fast saving
 nnoremap <leader>w :w!<cr>
-
-" Force Signify to refresh git gutter info
-nnoremap <silent> <leader>R :SignifyRefresh<cr>
 
 " search files with fzf
 nnoremap <C-p> :Files<cr>
@@ -150,6 +159,8 @@ set scrolloff=7
 " Enable code folding based on syntax
 set foldmethod=indent " Setting this to 'syntax' leads to gross performance
 set nofoldenable " Have folding off by default
+
+set signcolumn=yes
 
 """"""""""""""""
 " Colors and such
