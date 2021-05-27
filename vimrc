@@ -1,6 +1,3 @@
-" Needs to come before ALE is loaded
-let g:ale_completion_enabled = 1
-
 " Plugin setup
 call plug#begin('~/.local/share/nvim/plugged')
 set nocompatible
@@ -25,7 +22,7 @@ Plug 'wizicer/vim-jison' " jison syntax highlighting
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 
 " Typescript
-Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'leafgarland/typescript-vim' " TS syntax highlighting
 Plug 'peitalin/vim-jsx-typescript' " TSX
 Plug 'Quramy/vim-js-pretty-template' " Syntax highlighting for template strings
@@ -33,31 +30,35 @@ Plug 'jason0x43/vim-js-indent' " Indentation for JS/TS
 
 call plug#end()
 
+" Mapleader
+let mapleader = ","
+
 """"""""""""""""""""""
 " Plugin configuration
 """"""""""""""""""""""
 
-" Autocompletion
-" let g:deoplete#enable_at_startup = 1
-" let g:deoplete#enable_smart_case = 1
-" let g:deoplete#enable_camel_case = 1
-" let g:deoplete#omni#input_patterns = {}
-let g:nvim_typescript#signature_complete = 1
-autocmd CompleteDone * pclose!
-" Disable for text files, because it's annoying in prose
-autocmd FileType text  let b:deoplete_disable_auto_complete = 1
+" CoC autocompletion
+let g:coc_global_extentions = ['coc-tsserver']
 
-" ALE
-let g:ale_set_loclist=0
-let g:ale_set_quickfix=1
-let g:ale_open_list=1
-let g:ale_set_signs=1
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave=0
-let g:ale_lint_on_enter=0
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <leader>ac  <Plug>(coc-codeaction)
+nmap <leader>qf  <Plug>(coc-fix-current)
+nmap <leader>rn <Plug>(coc-rename)
 
-" Tab to complete
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 " Expand carriage returns in matching delimiters
 let g:delimitMate_expand_cr=1
@@ -92,12 +93,6 @@ set clipboard=unnamed
 let g:python_host_prog = '/Users/chris/.pyenv/shims/python'
 let g:python3_host_prog = '/Users/chris/.pyenv/shims/python3'
 
-" Mapleader
-let mapleader = ","
-
-" So you don't have to do <Leader><Leader> in easymotion
-map <Leader> <Plug>(easymotion-prefix)
-
 " Editing and sourcing .vimrc
 nnoremap <leader>ev :e $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
@@ -109,7 +104,7 @@ inoremap jk <esc>
 nnoremap <leader>w :w!<cr>
 
 " search files with fzf
-nnoremap <C-p> :Files<cr>
+nnoremap <C-p> :GFiles<cr>
 nnoremap ; :Buffers<cr>
 
 " Always show the current position
@@ -233,12 +228,6 @@ set wrap
 
 " Fixes comments always getting outdented in Python
 au! FileType python setl nosmartindent
-
-"""""""""""""""""
-" Navigate tabs
-"""""""""""""""""
-nnoremap <silent> [g :tabprevious<cr>
-nnoremap <silent> ]g :tabnext<cr>
 
 """""""""""""""""""""""""
 " Create and close splits
