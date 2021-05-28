@@ -77,6 +77,9 @@ set updatetime=250
 " where to open fzf list
 let g:fzf_layout = { 'down': '~20%' }
 
+" The netrw banner is annoying
+let g:netrw_banner=0
+
 """"""""""""""""""
 " End plugin stuff
 """"""""""""""""""
