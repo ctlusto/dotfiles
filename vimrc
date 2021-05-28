@@ -7,8 +7,8 @@ set t_Co=256
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'Shougo/vimproc.vim', { 'do': 'make' } " Async support
 Plug 'Raimondi/delimitMate' " Better matching for delimiters
-Plug '/usr/local/opt/fzf' " Better file finding with fzf
-Plug 'junegunn/fzf.vim' " Better file finding with fzf
+" Plug '/usr/local/opt/fzf' " Better file finding with fzf
+" Plug 'junegunn/fzf.vim' " Better file finding with fzf
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive' " Git wrapper 
 Plug 'tpope/vim-unimpaired' " Pairs of useful mappings
@@ -28,6 +28,11 @@ Plug 'peitalin/vim-jsx-typescript' " TSX
 Plug 'Quramy/vim-js-pretty-template' " Syntax highlighting for template strings
 Plug 'jason0x43/vim-js-indent' " Indentation for JS/TS
 
+" Nightly stuff
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
 call plug#end()
 
 " Mapleader
@@ -35,7 +40,12 @@ let mapleader = ","
 
 """"""""""""""""""""""
 " Plugin configuration
-""""""""""""""""""""""
+
+" Nightly stuff
+nnoremap <C-p> :lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
+nnoremap ; <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 " CoC autocompletion
 let g:coc_global_extentions = ['coc-tsserver']
@@ -107,8 +117,8 @@ inoremap jk <esc>
 nnoremap <leader>w :w!<cr>
 
 " search files with fzf
-nnoremap <C-p> :GFiles<cr>
-nnoremap ; :Buffers<cr>
+" nnoremap <C-p> :GFiles<cr>
+" nnoremap ; :Buffers<cr>
 
 " Always show the current position
 set ruler
