@@ -4,34 +4,29 @@ set nocompatible
 filetype off
 set t_Co=256
 
-Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'Shougo/vimproc.vim', { 'do': 'make' } " Async support
 Plug 'Raimondi/delimitMate' " Better matching for delimiters
-" Plug '/usr/local/opt/fzf' " Better file finding with fzf
-" Plug 'junegunn/fzf.vim' " Better file finding with fzf
-Plug 'mhinz/vim-signify'
-Plug 'tpope/vim-fugitive' " Git wrapper 
 Plug 'tpope/vim-unimpaired' " Pairs of useful mappings
 Plug 'sheerun/vim-polyglot' " Support for a bunch of languages
-Plug 'vim-airline/vim-airline' " Nice status bar
 Plug 'mattn/emmet-vim' " Emmet functionality
 Plug 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
 Plug 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
 Plug 'tpope/vim-commentary' " Commenting
-Plug 'wizicer/vim-jison' " jison syntax highlighting
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 
 " Typescript
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'leafgarland/typescript-vim' " TS syntax highlighting
 Plug 'peitalin/vim-jsx-typescript' " TSX
-Plug 'Quramy/vim-js-pretty-template' " Syntax highlighting for template strings
 Plug 'jason0x43/vim-js-indent' " Indentation for JS/TS
 
 " Nightly stuff
+Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-telescope/telescope.nvim'
+Plug 'marko-cerovac/material.nvim'
+Plug 'lewis6991/gitsigns.nvim'
+Plug 'hoob3rt/lualine.nvim'
+Plug 'hrsh7th/nvim-compe'
 
 call plug#end()
 
@@ -46,46 +41,150 @@ nnoremap <C-p> :lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
 nnoremap ; <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+colorscheme material
+let g:material_style = 'palenight'
+
+lua <<EOF
+require('gitsigns').setup()
+
+require'lualine'.setup{
+  options = { theme = 'material' }
+}
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+  },
+}
+EOF
+
+lua << EOF
+-- Compe setup
+require'compe'.setup {
+  enabled = true;
+  autocomplete = true;
+  debug = false;
+  min_length = 1;
+  preselect = 'enable';
+  throttle_time = 80;
+  source_timeout = 200;
+  incomplete_delay = 400;
+  max_abbr_width = 100;
+  max_kind_width = 100;
+  max_menu_width = 100;
+  documentation = true;
+
+  source = {
+    path = true;
+    nvim_lsp = true;
+  };
+}
+
+local t = function(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+local check_back_space = function()
+    local col = vim.fn.col('.') - 1
+    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+        return true
+    else
+        return false
+    end
+end
+
+-- Use (s-)tab to:
+--- move to prev/next item in completion menuone
+--- jump to prev/next snippet's placeholder
+_G.tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-n>"
+  elseif check_back_space() then
+    return t "<Tab>"
+  else
+    return vim.fn['compe#complete']()
+  end
+end
+_G.s_tab_complete = function()
+  if vim.fn.pumvisible() == 1 then
+    return t "<C-p>"
+  else
+    return t "<S-Tab>"
+  end
+end
+
+vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+EOF
+
+lua << EOF
+vim.lsp.handlers["textDocument/references"] = require("telescope.builtin").lsp_references
+local nvim_lsp = require('lspconfig')
+
+-- Use an on_attach function to only map the following keys 
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  --Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { "tsserver" }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup { on_attach = on_attach }
+end
+EOF
 
 " CoC autocompletion
-let g:coc_global_extentions = ['coc-tsserver']
 
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-nmap <leader>ac  <Plug>(coc-codeaction)
-nmap <leader>qf  <Plug>(coc-fix-current)
-nmap <leader>rn <Plug>(coc-rename)
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> [g <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" nmap <leader>ac  <Plug>(coc-codeaction)
+" nmap <leader>qf  <Plug>(coc-fix-current)
+" nmap <leader>rn <Plug>(coc-rename)
 
 " Expand carriage returns in matching delimiters
 let g:delimitMate_expand_cr=1
 
-" Airline theme
-let g:airline_theme='dracula'
-let g:airline#extension#tabline#enabled=1
-let g:airline_powerline_fonts=1
-let g:airline#extensions#ale#enabled=1
+" Status line
 set laststatus=2
 
 " Gutter info behavior/styling
 set updatetime=250
-
-" fzf
-" where to open fzf list
-let g:fzf_layout = { 'down': '~20%' }
 
 " The netrw banner is annoying
 let g:netrw_banner=0
@@ -184,11 +283,11 @@ augroup filetypedetect
 augroup END
 
 " Color scheme
-augroup dracula_customization
-  au!
-  autocmd ColorScheme * highlight LineNr guifg=#949494
-augroup END
-color dracula
+" augroup dracula_customization
+"   au!
+"   autocmd ColorScheme * highlight LineNr guifg=#949494
+" augroup END
+" color dracula
 
 " Line numbers
 set cursorline
