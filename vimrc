@@ -43,6 +43,8 @@ nnoremap ; <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 colorscheme material
 let g:material_style = 'palenight'
+au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
+
 
 lua <<EOF
 require('gitsigns').setup()
