@@ -45,8 +45,7 @@ colorscheme material
 let g:material_style = 'palenight'
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
-
-lua <<EOF
+lua << EOF
 require('gitsigns').setup()
 
 require'lualine'.setup{
@@ -63,9 +62,7 @@ require'nvim-treesitter.configs'.setup {
     enable = true,              -- false will disable the whole extension
   },
 }
-EOF
 
-lua << EOF
 -- Compe setup
 require'compe'.setup {
   enabled = true;
@@ -124,9 +121,7 @@ vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-EOF
 
-lua << EOF
 vim.lsp.handlers["textDocument/references"] = require("telescope.builtin").lsp_references
 local nvim_lsp = require('lspconfig')
 
@@ -160,12 +155,11 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { "tsserver", "rust_analyzer" }
+local servers = { "pyright", "rust_analyzer", "tsserver" }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
@@ -207,9 +201,8 @@ let g:netrw_banner=0
 set clipboard=unnamed
 
 "Python support
-" TODO - Need to set up virtualenv for nvim
-let g:python_host_prog = '/Users/chris/.pyenv/shims/python'
-let g:python3_host_prog = '/Users/chris/.pyenv/shims/python3'
+let g:python_host_prog = '/Users/chris/.pyenv/shims/python2'
+let g:python3_host_prog = '/Users/chris/.pyenv/shims/python'
 
 " Editing and sourcing .vimrc
 nnoremap <leader>ev :e $MYVIMRC<cr>
