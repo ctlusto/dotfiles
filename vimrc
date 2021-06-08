@@ -11,6 +11,7 @@ Plug 'mattn/emmet-vim' " Emmet functionality
 Plug 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
 Plug 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
 Plug 'tpope/vim-commentary' " Commenting
+Plug 'tpope/vim-fugitive' " Git wrapper
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 
 " Typescript
