@@ -12,6 +12,7 @@ Plug 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
 Plug 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
 Plug 'tpope/vim-commentary' " Commenting
 Plug 'tpope/vim-fugitive' " Git wrapper
+Plug 'tpope/vim-rhubarb' " Open files on GitHub
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 
 " Typescript
@@ -161,18 +162,6 @@ for _, lsp in ipairs(servers) do
 end
 EOF
 
-" CoC autocompletion
-
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-" nmap <silent> [g <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]g <Plug>(coc-diagnostic-next)
-" nmap <leader>ac  <Plug>(coc-codeaction)
-" nmap <leader>qf  <Plug>(coc-fix-current)
-" nmap <leader>rn <Plug>(coc-rename)
-
 " Expand carriage returns in matching delimiters
 let g:delimitMate_expand_cr=1
 
@@ -184,6 +173,13 @@ set updatetime=250
 
 " The netrw banner is annoying
 let g:netrw_banner=0
+
+" Fugitive
+nnoremap <leader>gs :Git<cr>
+nnoremap <leader>gb :G blame<cr>
+nnoremap <leader>gh :GBrowse<cr>
+vnoremap <leader>gh :GBrowse<cr>
+nnoremap <leader>gp :Git push<cr>
 
 """"""""""""""""""
 " End plugin stuff
