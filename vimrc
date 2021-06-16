@@ -14,10 +14,11 @@ Plug 'tpope/vim-commentary' " Commenting
 Plug 'tpope/vim-fugitive' " Git wrapper
 Plug 'tpope/vim-rhubarb' " Open files on GitHub
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 
 " Typescript
 Plug 'peitalin/vim-jsx-typescript' " TSX
-Plug 'jason0x43/vim-js-indent' " Indentation for JS/TS
+Plug 'pangloss/vim-javascript' " Indentation, etc. for JS
 
 " Nightly stuff
 Plug 'neovim/nvim-lspconfig'
@@ -25,12 +26,25 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'marko-cerovac/material.nvim'
-Plug 'lewis6991/gitsigns.nvim'
+Plug 'marko-cerovac/material.nvim', { 'branch': 'pure-lua '}
+Plug 'lewis6991/gitsigns.nvim', { 'branch': 'main' }
 Plug 'hoob3rt/lualine.nvim'
 Plug 'hrsh7th/nvim-compe'
 
+" Themes
+Plug 'marko-cerovac/material.nvim', { 'branch': 'pure-lua '}
+Plug 'arcticicestudio/nord-vim'
+
 call plug#end()
+
+" colorscheme material
+" let g:material_style = 'palenight'
+colorscheme nord
+let g:nord_cursor_line_number_background = 1
+let g:nord_bold_vertical_split_line = 1
+let g:nord_uniform_diff_background = 1
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
 
 " Mapleader
 let mapleader = ","
@@ -43,15 +57,13 @@ nnoremap <C-p> :lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
 nnoremap ; <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-colorscheme material
-let g:material_style = 'palenight'
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
 lua << EOF
 require('gitsigns').setup()
 
 require'lualine'.setup{
-  options = { theme = 'material' },
+  options = { theme = 'nord' },
   sections = {
     lualine_c = { {'filename', path = 1 } },
     lualine_x = { 'encoding', 'filetype' }
@@ -65,7 +77,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
--- Compe setup
+-- Completion setup
 require'compe'.setup {
   enabled = true;
   autocomplete = true;
@@ -205,10 +217,6 @@ inoremap jk <esc>
 
 " Fast saving
 nnoremap <leader>w :w!<cr>
-
-" search files with fzf
-" nnoremap <C-p> :GFiles<cr>
-" nnoremap ; :Buffers<cr>
 
 " Always show the current position
 set ruler
