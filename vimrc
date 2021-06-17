@@ -15,6 +15,7 @@ Plug 'tpope/vim-fugitive' " Git wrapper
 Plug 'tpope/vim-rhubarb' " Open files on GitHub
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'milkypostman/vim-togglelist'
 
 " Typescript
 Plug 'peitalin/vim-jsx-typescript' " TSX
@@ -47,7 +48,7 @@ let g:nord_italic = 1
 let g:nord_italic_comments = 1
 
 " Mapleader
-let mapleader = ","
+let mapleader = " "
 
 """"""""""""""""""""""
 " Plugin configuration
@@ -280,13 +281,6 @@ syntax enable
 augroup filetypedetect
   au BufRead,BufNewFile *.underscore set filetype=html
 augroup END
-
-" Color scheme
-" augroup dracula_customization
-"   au!
-"   autocmd ColorScheme * highlight LineNr guifg=#949494
-" augroup END
-" color dracula
 
 " Line numbers
 set cursorline
