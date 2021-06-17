@@ -347,3 +347,9 @@ nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
+
+"""""""""""""""""
+" Merge conflicts
+"""""""""""""""""
+nnoremap <leader>dgf <cmd>diffget //2<cr>
+nnoremap <leader>dgj <cmd>diffget //3<cr>
