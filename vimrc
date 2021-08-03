@@ -56,7 +56,7 @@ let mapleader = " "
 " Nightly stuff
 nnoremap <C-p> :lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
-nnoremap ; <cmd>Telescope buffers<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
@@ -218,6 +218,9 @@ inoremap jk <esc>
 
 " Fast saving
 nnoremap <leader>w :w!<cr>
+
+" Open a terminal faster
+nnoremap <leader>t :terminal<cr>
 
 " Always show the current position
 set ruler
