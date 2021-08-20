@@ -33,19 +33,9 @@ Plug 'hoob3rt/lualine.nvim'
 Plug 'hrsh7th/nvim-compe'
 
 " Themes
-Plug 'marko-cerovac/material.nvim', { 'branch': 'pure-lua '}
-Plug 'arcticicestudio/nord-vim'
+Plug 'EdenEast/nightfox.nvim', { 'branch': 'main' }
 
 call plug#end()
-
-" colorscheme material
-" let g:material_style = 'palenight'
-colorscheme nord
-let g:nord_cursor_line_number_background = 1
-let g:nord_bold_vertical_split_line = 1
-let g:nord_uniform_diff_background = 1
-let g:nord_italic = 1
-let g:nord_italic_comments = 1
 
 " Mapleader
 let mapleader = " "
@@ -61,15 +51,19 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
 lua << EOF
-require('gitsigns').setup()
+vim.g.nightfox_style = "nordfox"
+vim.g.nightfox_italic_comments = 1
+require('nightfox').set()
 
 require'lualine'.setup{
-  options = { theme = 'nord' },
+  options = { theme = 'nightfox' },
   sections = {
     lualine_c = { {'filename', path = 1 } },
     lualine_x = { 'encoding', 'filetype' }
     }
 }
+
+require('gitsigns').setup()
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
