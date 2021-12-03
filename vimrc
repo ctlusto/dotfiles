@@ -27,7 +27,6 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'marko-cerovac/material.nvim', { 'branch': 'pure-lua '}
 Plug 'lewis6991/gitsigns.nvim', { 'branch': 'main' }
 Plug 'hoob3rt/lualine.nvim'
 Plug 'hrsh7th/nvim-compe'
@@ -51,9 +50,16 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
 lua << EOF
-vim.g.nightfox_style = "nordfox"
-vim.g.nightfox_italic_comments = 1
-require('nightfox').set()
+local nightfox = require('nightfox')
+nightfox.setup({
+  fox = "nordfox",
+  styles = {
+    comments = "italic",
+    keywords = "bold",
+    functions = "italic,bold"
+  }
+})
+nightfox.load()
 
 require'lualine'.setup{
   options = { theme = 'nightfox' },
@@ -133,6 +139,13 @@ vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 
 vim.lsp.handlers["textDocument/references"] = require("telescope.builtin").lsp_references
 local nvim_lsp = require('lspconfig')
+-- Gutter icons for LSP
+local signs = { Error = "✘", Warning = "!", Hint = "?", Info = "i" }
+
+for type, icon in pairs(signs) do
+  local hl = "LspDiagnosticsSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
 
 -- Use an on_attach function to only map the following keys 
 -- after the language server attaches to the current buffer
@@ -181,12 +194,18 @@ set updatetime=250
 " The netrw banner is annoying
 let g:netrw_banner=0
 
+" Hitting gx instead of gc is almost always an error
+let g:netrw_nogx=1
+
 " Fugitive
 nnoremap <leader>gs :Git<cr>
 nnoremap <leader>gb :G blame<cr>
 nnoremap <leader>gh :GBrowse<cr>
 vnoremap <leader>gh :GBrowse<cr>
 nnoremap <leader>gp :Git push<cr>
+
+" Format JSON
+" nnoremap <leader>jq :%!jq .<cr>
 
 """"""""""""""""""
 " End plugin stuff
@@ -236,8 +255,13 @@ set smartcase
 " Make searching nicer
 set hlsearch
 set incsearch
+
 " Clear search highlighting quickly
-nnoremap <silent> <space> :noh<cr>
+nnoremap <silent> <cr> :noh<cr>
+
+" Big left and big right
+nnoremap H ^
+nnoremap L $
 
 " Turn magic on for regexps
 set magic
