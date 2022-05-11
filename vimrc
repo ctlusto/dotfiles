@@ -10,26 +10,27 @@ Plug 'sheerun/vim-polyglot' " Support for a bunch of languages
 Plug 'mattn/emmet-vim' " Emmet functionality
 Plug 'tpope/vim-surround' " Surround text with stuff (quotes, braces, etc.)
 Plug 'tpope/vim-repeat' " Repeat entire plugin maps, not just their native commands
-Plug 'tpope/vim-commentary' " Commenting
+Plug 'numToStr/Comment.nvim' " Commenting
 Plug 'tpope/vim-fugitive' " Git wrapper
 Plug 'tpope/vim-rhubarb' " Open files on GitHub
 Plug 'niftylettuce/vim-jinja' " nunjucks syntax highlighting
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'milkypostman/vim-togglelist'
+Plug 'milkypostman/vim-togglelist' " Toggle quickfix
+Plug 'kyazdani42/nvim-web-devicons' " Filetype icons for Telescope
+Plug 'lukas-reineke/indent-blankline.nvim' " Show indent guides
+Plug 'neovim/nvim-lspconfig' " Configure language servers
+Plug 'nvim-lua/popup.nvim' " Use popups
+Plug 'nvim-lua/plenary.nvim' " Helpers for various plugins
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'} " Parsing support
+Plug 'nvim-telescope/telescope.nvim' " Picker/finder
+Plug 'lewis6991/gitsigns.nvim', { 'branch': 'main' }
+Plug 'hoob3rt/lualine.nvim' " Status line
+Plug 'hrsh7th/nvim-compe' " Completion
+Plug 'voldikss/vim-floaterm' " Floating terminal
 
 " Typescript
 Plug 'peitalin/vim-jsx-typescript' " TSX
 Plug 'pangloss/vim-javascript' " Indentation, etc. for JS
-
-" Nightly stuff
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'lewis6991/gitsigns.nvim', { 'branch': 'main' }
-Plug 'hoob3rt/lualine.nvim'
-Plug 'hrsh7th/nvim-compe'
 
 " Themes
 Plug 'EdenEast/nightfox.nvim', { 'branch': 'main' }
@@ -42,14 +43,22 @@ let mapleader = " "
 """"""""""""""""""""""
 " Plugin configuration
 
-" Nightly stuff
+" Telescope stuff
 nnoremap <C-p> :lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fg :lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fc :lua require('telescope.builtin').grep_string()<cr>
+nnoremap <leader>ff :lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 au TextYankPost * silent! lua vim.highlight.on_yank {on_visual=false}
 
 lua << EOF
+require('telescope').setup{
+  defaults = {
+    path_display = { "truncate" }
+  }
+}
+
 local nightfox = require('nightfox')
 nightfox.setup({
   fox = "nordfox",
@@ -61,6 +70,8 @@ nightfox.setup({
 })
 nightfox.load()
 
+require("indent_blankline").setup()
+
 require'lualine'.setup{
   options = { theme = 'nightfox' },
   sections = {
@@ -70,6 +81,7 @@ require'lualine'.setup{
 }
 
 require('gitsigns').setup()
+require('Comment').setup()
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
@@ -140,12 +152,14 @@ vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 vim.lsp.handlers["textDocument/references"] = require("telescope.builtin").lsp_references
 local nvim_lsp = require('lspconfig')
 -- Gutter icons for LSP
-local signs = { Error = "✘", Warning = "!", Hint = "?", Info = "i" }
-
-for type, icon in pairs(signs) do
-  local hl = "LspDiagnosticsSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+vim.fn.sign_define("DiagnosticSignError",
+    {text = "", texthl = "DiagnosticSignError"})
+vim.fn.sign_define("DiagnosticSignWarn",
+    {text = "", texthl = "DiagnosticSignWarn"})
+vim.fn.sign_define("DiagnosticSignInformation",
+    {text = "", texthl = "DiagnosticSignInformation"})
+vim.fn.sign_define("DiagnosticSignHint",
+    {text = "", texthl = "DiagnosticSignHint"})
 
 -- Use an on_attach function to only map the following keys 
 -- after the language server attaches to the current buffer
@@ -232,8 +246,8 @@ inoremap jk <esc>
 " Fast saving
 nnoremap <leader>w :w!<cr>
 
-" Open a terminal faster
-nnoremap <leader>t :terminal<cr>
+" Open a floating terminal
+nnoremap <leader>t :FloatermToggle<cr>
 
 " Always show the current position
 set ruler
@@ -305,6 +319,7 @@ augroup END
 
 " Line numbers
 set cursorline
+set cursorcolumn
 
 " Highlight column 80
 set colorcolumn=80
